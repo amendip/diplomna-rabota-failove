@@ -21,6 +21,14 @@
   (Folder "Outputs")
   (Folder "Referenced Projects")
   (PartMRUSelector
+    ("SW SPST"
+      (FullPartName "SW SPST.Normal")
+      (LibraryName "C:\ORCAD\ORCAD_10.5\TOOLS\CAPTURE\LIBRARY\DISCRETE.OLB")
+      (DeviceIndex "0"))
+    ("03962A BATTERY CHARGER"
+      (FullPartName "03962A BATTERY CHARGER.Normal")
+      (LibraryName "C:\ORCAD_PROJECTS\OSCIL\OSCIL.OLB")
+      (DeviceIndex "0"))
     (BNC
       (FullPartName "BNC.Normal")
       (LibraryName "C:\ORCAD\ORCAD_10.5\TOOLS\CAPTURE\LIBRARY\CONNECTOR.OLB")
@@ -110,14 +118,6 @@
     ("POT DUAL"
       (FullPartName "POT DUAL.Normal")
       (LibraryName "C:\ORCAD\ORCAD_10.5\TOOLS\CAPTURE\LIBRARY\DISCRETE.OLB")
-      (DeviceIndex "0"))
-    ("OPAMP SINGLE SUPPLY"
-      (FullPartName "OPAMP SINGLE SUPPLY.Normal")
-      (LibraryName "C:\ORCAD\ORCAD_10.5\TOOLS\CAPTURE\LIBRARY\OPAMP.OLB")
-      (DeviceIndex "0"))
-    (CON15
-      (FullPartName "CON15.Normal")
-      (LibraryName "C:\ORCAD\ORCAD_10.5\TOOLS\CAPTURE\LIBRARY\CONNECTOR.OLB")
       (DeviceIndex "0")))
   (GlobalState
     (FileView
@@ -126,7 +126,7 @@
       (Path "Design Resources" "C:\ORCAD_PROJECTS\oscil\oscil.dsn" "SCHEMATIC1")
       (Path "Design Resources" "Library")
       (Path "Design Resources" "Library" ".\oscil.olb")
-      (Select "Design Resources" "Library" ".\oscil.olb" "MCP6024"))
+      (Select "Design Resources" "C:\ORCAD_PROJECTS\oscil\oscil.dsn"))
     (HierarchyView)
     (Doc
       (Type "COrCapturePMDoc")
@@ -137,8 +137,8 @@
       (Type "COrSchematicDoc")
       (Frame
         (Placement "44 0 1 -1 -1 -4 -23 235 1229 26 645")
-        (Scroll "23 270")
-        (Zoom "146")
+        (Scroll "882 1460")
+        (Zoom "416")
         (Occurrence "/"))
       (Path "C:\ORCAD_PROJECTS\OSCIL\OSCIL.DSN")
       (Schematic "SCHEMATIC1")

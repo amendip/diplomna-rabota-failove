@@ -122,7 +122,8 @@
   (GlobalState
     (FileView
       (Path "Design Resources")
-      (Path "Design Resources" "Library"))
+      (Path "Design Resources" "Library")
+      (Select "Design Resources"))
     (HierarchyView)
     (Doc
       (Type "COrCapturePMDoc")
@@ -133,8 +134,8 @@
       (Type "COrSchematicDoc")
       (Frame
         (Placement "44 0 1 -1 -1 -4 -23 235 1229 26 645")
-        (Scroll "2579 630")
-        (Zoom "208")
+        (Scroll "0 0")
+        (Zoom "52")
         (Occurrence "/"))
       (Path "C:\ORCAD_PROJECTS\OSCIL\OSCIL.DSN")
       (Schematic "SCHEMATIC1")

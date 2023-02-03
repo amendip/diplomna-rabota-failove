@@ -122,8 +122,7 @@
   (GlobalState
     (FileView
       (Path "Design Resources")
-      (Path "Design Resources" "Library")
-      (Path "Design Resources" "Library" "C:\ORCAD_PROJECTS\oscil\oscil.olb"))
+      (Path "Design Resources" "Library"))
     (HierarchyView)
     (Doc
       (Type "COrCapturePMDoc")

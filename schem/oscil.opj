@@ -17,10 +17,21 @@
     (ANNOTATE_Reset_References_to_1 "FALSE")
     (ANNOTATE_No_Page_Number_Change "FALSE")
     (ANNOTATE_Property_Combine "{Value}{Source Package}{POWER_GROUP}")
-    (ANNOTATE_IncludeNonPrimitive "FALSE"))
-  (Folder "Outputs")
+    (ANNOTATE_IncludeNonPrimitive "FALSE")
+    (Netlist_TAB "3")
+    (LAYOUT_Netlist_File "OSCIL.MNL")
+    (LAYOUT_PCB_Footprint "{PCB Footprint}")
+    ( "FALSE")
+    (LAYOUT_Units "0"))
+  (Folder "Outputs"
+    (File ".\oscil.mnl"
+      (Type "LAYOUT Netlist File")))
   (Folder "Referenced Projects")
   (PartMRUSelector
+    (CON1
+      (FullPartName "CON1.Normal")
+      (LibraryName "C:\ORCAD\ORCAD_10.5\TOOLS\CAPTURE\LIBRARY\CONNECTOR.OLB")
+      (DeviceIndex "0"))
     ("SW SPST"
       (FullPartName "SW SPST.Normal")
       (LibraryName "C:\ORCAD\ORCAD_10.5\TOOLS\CAPTURE\LIBRARY\DISCRETE.OLB")
@@ -114,16 +125,14 @@
       (DeviceIndex "0"))
     (GND
       (LibraryName "C:\ORCAD\ORCAD_10.5\TOOLS\CAPTURE\LIBRARY\CAPSYM.OLB")
-      (DeviceIndex "0"))
-    ("POT DUAL"
-      (FullPartName "POT DUAL.Normal")
-      (LibraryName "C:\ORCAD\ORCAD_10.5\TOOLS\CAPTURE\LIBRARY\DISCRETE.OLB")
       (DeviceIndex "0")))
   (GlobalState
     (FileView
       (Path "Design Resources")
+      (Path "Design Resources" "C:\ORCAD_PROJECTS\oscil\oscil.dsn")
       (Path "Design Resources" "Library")
-      (Select "Design Resources"))
+      (Path "Outputs")
+      (Select "Design Resources" "C:\ORCAD_PROJECTS\oscil\oscil.dsn"))
     (HierarchyView)
     (Doc
       (Type "COrCapturePMDoc")
@@ -133,9 +142,9 @@
     (Doc
       (Type "COrSchematicDoc")
       (Frame
-        (Placement "44 0 1 -1 -1 -4 -23 235 1229 26 645")
-        (Scroll "0 0")
-        (Zoom "52")
+        (Placement "44 0 1 -1 -1 -4 -23 235 1229 26 642")
+        (Scroll "396 7")
+        (Zoom "132")
         (Occurrence "/"))
       (Path "C:\ORCAD_PROJECTS\OSCIL\OSCIL.DSN")
       (Schematic "SCHEMATIC1")

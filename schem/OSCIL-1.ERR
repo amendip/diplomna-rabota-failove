@@ -1,0 +1,7 @@
+AutoECO Error Report
+FILE-A: C:\ORCAD\ORCAD_10.5\TOOLS\LAYOUT_PLUS\DATA\1BET_ANY.TCH
+FILE-B: C:\ORCAD_PROJECTS\OSCIL\OSCIL.MNL
+Cannot load a metric netlist on top of an english board or template.
+Please convert.
+Unable to complete ECO due to errors
+1 error found

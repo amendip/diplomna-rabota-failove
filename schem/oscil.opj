@@ -132,9 +132,7 @@
       (Path "Design Resources" "C:\ORCAD_PROJECTS\oscil\oscil.dsn" "SCHEMATIC1")
       (Path "Design Resources" "Library")
       (Path "Design Resources" "Library" "C:\ORCAD_PROJECTS\oscil\oscil.olb")
-      (Path "Outputs")
-      (Select "Design Resources" "C:\ORCAD_PROJECTS\oscil\oscil.dsn"
-         "SCHEMATIC1" "CHANNEL3"))
+      (Path "Outputs"))
     (HierarchyView)
     (Doc
       (Type "COrCapturePMDoc")
@@ -145,8 +143,8 @@
       (Type "COrSchematicDoc")
       (Frame
         (Placement "44 0 1 -1 -1 -4 -23 234 1228 43 659")
-        (Scroll "0 0")
-        (Zoom "104")
+        (Scroll "36 510")
+        (Zoom "168")
         (Occurrence "/"))
       (Path "C:\ORCAD_PROJECTS\OSCIL\OSCIL.DSN")
       (Schematic "SCHEMATIC1")
@@ -155,7 +153,7 @@
       (Type "COrSchematicDoc")
       (Frame
         (Placement "44 0 1 -1 -1 -4 -23 261 1251 286 900")
-        (Scroll "0 0")
+        (Scroll "850 450")
         (Zoom "154")
         (Occurrence "/"))
       (Path "C:\ORCAD_PROJECTS\OSCIL\OSCIL.DSN")
@@ -165,7 +163,7 @@
       (Type "COrSchematicDoc")
       (Frame
         (Placement "44 0 1 -1 -1 -4 -23 196 1186 122 737")
-        (Scroll "142 0")
+        (Scroll "0 60")
         (Zoom "156")
         (Occurrence "/"))
       (Path "C:\ORCAD_PROJECTS\OSCIL\OSCIL.DSN")
@@ -175,7 +173,7 @@
       (Type "COrSchematicDoc")
       (Frame
         (Placement "44 0 1 -1 -1 -4 -23 22 1012 22 628")
-        (Scroll "0 0")
+        (Scroll "616 559")
         (Zoom "134")
         (Occurrence "/"))
       (Path "C:\ORCAD_PROJECTS\OSCIL\OSCIL.DSN")

@@ -21,7 +21,7 @@
     (Netlist_TAB "3")
     (LAYOUT_Netlist_File "OSCIL.MNL")
     (LAYOUT_PCB_Footprint "{PCB Footprint}")
-    ( "FALSE")
+    (FALSE)
     (LAYOUT_Units "0"))
   (Folder "Outputs"
     (File ".\oscil.mnl"
@@ -128,12 +128,9 @@
   (GlobalState
     (FileView
       (Path "Design Resources")
-      (Path "Design Resources" "C:\ORCAD_PROJECTS\oscil\oscil.dsn")
-      (Path "Design Resources" "C:\ORCAD_PROJECTS\oscil\oscil.dsn" "SCHEMATIC1")
       (Path "Design Resources" "Library")
-      (Path "Design Resources" "Library" "C:\ORCAD_PROJECTS\oscil\oscil.olb")
       (Path "Outputs")
-      (Select "Design Resources" "C:\ORCAD_PROJECTS\oscil\oscil.dsn"))
+      (Select "Design Resources"))
     (HierarchyView)
     (Doc
       (Type "COrCapturePMDoc")
@@ -144,7 +141,7 @@
       (Type "COrSchematicDoc")
       (Frame
         (Placement "44 0 1 -1 -1 -4 -23 234 1228 43 659")
-        (Scroll "0 0")
+        (Scroll "0 96")
         (Zoom "84")
         (Occurrence "/"))
       (Path "C:\ORCAD_PROJECTS\OSCIL\OSCIL.DSN")
@@ -154,7 +151,7 @@
       (Type "COrSchematicDoc")
       (Frame
         (Placement "44 0 1 -1 -1 -4 -23 261 1251 286 900")
-        (Scroll "850 208")
+        (Scroll "850 478")
         (Zoom "154")
         (Occurrence "/"))
       (Path "C:\ORCAD_PROJECTS\OSCIL\OSCIL.DSN")
@@ -164,7 +161,7 @@
       (Type "COrSchematicDoc")
       (Frame
         (Placement "44 0 1 -1 -1 -4 -23 196 1186 122 737")
-        (Scroll "721 189")
+        (Scroll "109 0")
         (Zoom "156")
         (Occurrence "/"))
       (Path "C:\ORCAD_PROJECTS\OSCIL\OSCIL.DSN")
@@ -174,7 +171,7 @@
       (Type "COrSchematicDoc")
       (Frame
         (Placement "44 0 1 -1 -1 -4 -23 22 1012 22 628")
-        (Scroll "616 342")
+        (Scroll "256 559")
         (Zoom "134")
         (Occurrence "/"))
       (Path "C:\ORCAD_PROJECTS\OSCIL\OSCIL.DSN")

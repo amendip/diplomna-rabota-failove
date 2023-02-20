@@ -21,8 +21,10 @@ void linehandler(){
 	VGA.start_adr=&VGA_RAMvect1[0];
 }
 #define SCRW 300
+#define GRID 0x01010101
 void linedraw(){
 	uint8_t *vadr;
+	uint32_t linecol;
 	uint16_t line=VGA.hsync_cnt-VGA_VSYNC_BILD_START;
 	uint16_t *b2, *b3;
 	if(adcbufbuf) b2=wb2, b3=wb3; else b2=wb2b, b3=wb3b;
@@ -30,8 +32,9 @@ void linedraw(){
 	vadr=&VGA_RAMvect1[0];
 	else
 	vadr=&VGA_RAMvect0[0];
+	if(line%48) linecol=0x00000000; else linecol=GRID;
 	if(line!=17) for(uint16_t i=0; i<SCRW/4; i++)
-		((uint32_t *)vadr)[i]=0x00;
+		((uint32_t *)vadr)[i]=linecol;
 	//for(uint16_t i=la[line]; i<la[line+1]; i++){
 	//	if(200-10*g1b[i%GBL]==VGA.hsync_cnt-VGA_VSYNC_BILD_START)
 	//	if(200==VGA.hsync_cnt-VGA_VSYNC_BILD_START)
@@ -47,7 +50,9 @@ void linedraw(){
 	}else if(line==17){
 	for(uint16_t i=0; i<SCRW; i++)
 		vadr[i]=0xff;
-	}else for(uint16_t i=rstrsi;i<SCRW;i+=4){
+	}else{
+	for(uint16_t i=35;i<280;i+=36) vadr[i]=GRID;
+	for(uint16_t i=rstrsi;i<SCRW;i+=4){
 		//if(line==300-(wb1[(i<<2)&0xff]>>4))
 		//vadr[i]^=0xFF;
 		//if(line==300-(wb2[i]>>4))
@@ -67,6 +72,7 @@ void linedraw(){
 		//if(line==300-(wb1[i]>>5))
 		//vadr[i]^=0xFF;
 	//	vadr[ia[i]]^=0xfc;
+	}
 	}
 	//for(uint16_t i=la2[line]; i<la2[line+1]; i++)
 	//	vadr[ia2[i]]^=0xE3;

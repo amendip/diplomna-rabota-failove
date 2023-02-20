@@ -175,6 +175,12 @@ adcend=0;
 //  ADC_Cmd(ADC1, ENABLE);
 ADC_SoftwareStartConv(ADC1);
 //while(!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) && tt<64) tt++;
+//while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==0);
+while(1){
+if(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==SET){ break; banner[1]++; }
+if(tt>70) break;
+tt++;
+}
 if(adcbuf)
 wb2b[adccnt]=ADC1->DR;
 else

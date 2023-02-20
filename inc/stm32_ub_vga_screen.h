@@ -55,7 +55,7 @@ extern uint8_t nhsps, invblank;
 // beeinflusst werden
 //--------------------------------------------------------------
 //#define VGA_TIM1_PERIODE      11
-#define VGA_TIM1_PERIODE       5
+#define VGA_TIM1_PERIODE       4
 #define VGA_TIM1_PRESCALE      0
 
 

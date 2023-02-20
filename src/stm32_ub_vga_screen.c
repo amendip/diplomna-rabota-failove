@@ -357,7 +357,7 @@ void TIM5_IRQHandler(void)
 //             nicht abgefragt (es gibt nur eine INT-Quelle
 //--------------------------------------------------------------
 uint32_t hsynccnt=0; 
-uint8_t nhsps=0;
+uint8_t nhsps=1;
 uint8_t invblank=0;
 void TIM2_IRQHandler(void)
 {
@@ -413,7 +413,7 @@ void TIM2_IRQHandler(void)
     }
   }
 
-  if(!(VGA.hsync_cnt&nhsps))
+  if(!(VGA.hsync_cnt%nhsps))
   hsyncsample();
 }
 

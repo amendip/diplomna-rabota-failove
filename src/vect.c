@@ -24,8 +24,8 @@ void linehandler(){
 void linedraw(){
 	uint8_t *vadr;
 	uint16_t line=VGA.hsync_cnt-VGA_VSYNC_BILD_START;
-	uint16_t *b2;
-	if(adcbufbuf) b2=wb2; else b2=wb2b;
+	uint16_t *b2, *b3;
+	if(adcbufbuf) b2=wb2, b3=wb3; else b2=wb2b, b3=wb3b;
 	if(!rv0_1)
 	vadr=&VGA_RAMvect1[0];
 	else
@@ -57,6 +57,8 @@ void linedraw(){
 		//if(line>=(300-(lb1[i][0])) && line<=(300-(lb1[i][1])))
 		//vadr[i]^=0xE3;
 		vadr[i]^=0x1C;
+		//if(line==(300-((b3[trigp+i])>>4)))
+		//vadr[i]^=0xE0;
 		//if(line==(300+((wb3[i])>>4)))
 		//vadr[i]^=0xE3;
 		//if(line==(300-((wb1[i])>>4)))

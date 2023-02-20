@@ -14,13 +14,16 @@ int main(void)
   UB_VGA_Screen_Init();
 
   GPIO_InitTypeDef  GPIO_InitStructure;
-  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
-  GPIO_Init(GPIOA, &GPIO_InitStructure);
+  GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15;
+  GPIO_Init(GPIOB, &GPIO_InitStructure);
 
   //wb2iala();
   adcinit();
@@ -47,11 +50,17 @@ int main(void)
     haha=1000000;
   }
 
-  if(!GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8)){
+  if(!GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_8)){
    if(!bp){
    //banner[3]++;
    bp=60000;
-   if(nhsps<200) nhsps++; else nhsps=0;
+   if(nhsps<200) nhsps++; else nhsps=1;
+   }
+  }else if(!GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_15)){
+   if(!bp){
+   //banner[3]++;
+   bp=60000;
+   if(nhsps>0) nhsps--; else nhsps=200;
    }
   }else{
    if(bp) bp--;

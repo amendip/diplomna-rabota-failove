@@ -81,6 +81,18 @@ void adcinitdma(){
 
 }
 
+void adcch0(){
+  ADC_RegularChannelConfig(ADC1, ADC_Channel_0, 1, ADC_SampleTime_3Cycles);
+}
+
+void adcch3(){
+  ADC_RegularChannelConfig(ADC1, ADC_Channel_3, 1, ADC_SampleTime_3Cycles);
+}
+
+void adcch6(){
+  ADC_RegularChannelConfig(ADC1, ADC_Channel_6, 1, ADC_SampleTime_3Cycles);
+}
+
 void adcinit(){
   ADC_InitTypeDef       ADC_InitStructure;
   ADC_CommonInitTypeDef ADC_CommonInitStructure;
@@ -92,11 +104,17 @@ void adcinit(){
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);  
 
+/*  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL ;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
+*/
+
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL ;
   GPIO_Init(GPIOA, &GPIO_InitStructure);
-    
+  
   /* ADC Common Init **********************************************************/
   ADC_CommonInitStructure.ADC_Mode = ADC_Mode_Independent;
   ADC_CommonInitStructure.ADC_Prescaler = ADC_Prescaler_Div2;
@@ -106,7 +124,7 @@ void adcinit(){
 
   /* ADC1 Init ****************************************************************/
   ADC_InitStructure.ADC_Resolution = ADC_Resolution_12b;
-  ADC_InitStructure.ADC_ScanConvMode = ENABLE;
+  ADC_InitStructure.ADC_ScanConvMode = DISABLE;
   ADC_InitStructure.ADC_ContinuousConvMode = DISABLE;
   ADC_InitStructure.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_None;
   ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_T1_CC1;
@@ -115,9 +133,10 @@ void adcinit(){
   ADC_Init(ADC1, &ADC_InitStructure);
   //ADC1->CR2 |= (1<<10);
 
+//ADC_EOCOnEachRegularChannelCmd(ADC1, ENABLE);
 
   /* ADC3 regular channel7 configuration **************************************/
-  ADC_RegularChannelConfig(ADC1, ADC_Channel_0, 1, ADC_SampleTime_3Cycles);
+  adcch0();
 
   /* Enable ADC3 */
   ADC_Cmd(ADC1, ENABLE);
@@ -131,6 +150,7 @@ uint8_t adccc=1;
 void hsyncsample(){
 //DMA2_Stream0->CR|=DMA_SxCR_EN;
 uint16_t tmp=0;
+uint8_t tt=1;
 /*if(adcend){
 ADC_SoftwareStartConv(ADC1);
 tmp=ADC1->DR;
@@ -151,11 +171,15 @@ return;
 }
 adcend=0;
 
+//  ADC_Cmd(ADC1, DISABLE);
+//  ADC_Cmd(ADC1, ENABLE);
 ADC_SoftwareStartConv(ADC1);
+//while(!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) && tt<64) tt++;
 if(adcbuf)
 wb2b[adccnt]=ADC1->DR;
 else
 wb2[adccnt]=ADC1->DR;
+//  ADC_Cmd(ADC1, DISABLE);
 //lb1[adccnt][0]=ADC1->DR;
 /*
 if(adccnt){
@@ -169,14 +193,25 @@ lb1[adccnt-1][0]=(uint16_t)lb1[adccnt][0];
 }
 */
 
+tt++;
+
 if(adccc>1){
+adcch3();
+  ADC_Cmd(ADC1, ENABLE);
 ADC_SoftwareStartConv(ADC1);
+while(!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) && tt<24) tt++;
+if(adcbuf)
+wb3b[adccnt]=ADC1->DR;
+else
 wb3[adccnt]=ADC1->DR;
+  ADC_Cmd(ADC1, DISABLE);
+
 if(adccc>2){
 ADC_SoftwareStartConv(ADC1);
 wb4[adccnt]=ADC1->DR;
 }
 }
+//adcch0();
 
 adccnt++;
 //DMA2_Stream0->CR|=((uint32_t)DMA_SxCR_EN);

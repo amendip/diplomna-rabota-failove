@@ -82,11 +82,11 @@ void adcinitdma(){
 }
 
 void adcch0(){
-  ADC_RegularChannelConfig(ADC1, ADC_Channel_0, 1, ADC_SampleTime_3Cycles);
+  ADC_RegularChannelConfig(ADC1, ADC_Channel_0, 1, ADC_SampleTime_15Cycles);
 }
 
 void adcch3(){
-  ADC_RegularChannelConfig(ADC1, ADC_Channel_3, 1, ADC_SampleTime_3Cycles);
+  ADC_RegularChannelConfig(ADC1, ADC_Channel_3, 1, ADC_SampleTime_15Cycles);
 }
 
 void adcch6(){
@@ -124,8 +124,8 @@ void adcinit(){
 
   /* ADC1 Init ****************************************************************/
   ADC_InitStructure.ADC_Resolution = ADC_Resolution_12b;
-  ADC_InitStructure.ADC_ScanConvMode = DISABLE;
-  ADC_InitStructure.ADC_ContinuousConvMode = DISABLE;
+  ADC_InitStructure.ADC_ScanConvMode = ENABLE;
+  ADC_InitStructure.ADC_ContinuousConvMode = ENABLE;
   ADC_InitStructure.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_None;
   ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_T1_CC1;
   ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
@@ -133,7 +133,7 @@ void adcinit(){
   ADC_Init(ADC1, &ADC_InitStructure);
   //ADC1->CR2 |= (1<<10);
 
-//ADC_EOCOnEachRegularChannelCmd(ADC1, ENABLE);
+ADC_EOCOnEachRegularChannelCmd(ADC1, ENABLE);
 
   /* ADC3 regular channel7 configuration **************************************/
   adcch0();
@@ -146,7 +146,7 @@ uint16_t adccnt=0;
 uint16_t triglvl=160;
 uint8_t adcend=0;
 uint8_t adcbuf=0, adcbad=0, adcbbd=1;
-uint8_t adccc=1;
+uint8_t adccc=2;
 void hsyncsample(){
 //DMA2_Stream0->CR|=DMA_SxCR_EN;
 uint16_t tmp=0;
@@ -173,20 +173,37 @@ adcend=0;
 
 //  ADC_Cmd(ADC1, DISABLE);
 //  ADC_Cmd(ADC1, ENABLE);
+adcch0();
+ADC_ClearFlag(ADC1, ADC_FLAG_OVR);
 ADC_SoftwareStartConv(ADC1);
 //while(!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) && tt<64) tt++;
 //while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==0);
-//while(1){
-//if(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==SET){ break; banner[1]++; }
-//if(tt>70) break;
-//tt++;
-//}
+//ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC);
+while(1){
+if(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==SET){
+banner[12]++;
+if(banner[12]>'9') banner[12]='0', banner[11]++;
+if(banner[11]>'9') banner[11]='0', banner[10]++;
+break; 
+}
+if(tt>10){
+banner[19]++;
+if(banner[19]>'9') banner[19]='0', banner[18]++;
+if(banner[18]>'9') banner[18]='0', banner[17]++;
+break;
+}
+tt++;
+}
+//  ADC_Cmd(ADC1, DISABLE);
 if(adcbuf)
+//lb1[adccnt][0]=(wb2b[adccnt]=ADC1->DR)>>4;
 wb2b[adccnt]=ADC1->DR;
 else
+//lb1[adccnt][0]=(wb2[adccnt]=ADC1->DR)>>4;
 wb2[adccnt]=ADC1->DR;
-//  ADC_Cmd(ADC1, DISABLE);
+
 //lb1[adccnt][0]=ADC1->DR;
+
 /*
 if(adccnt){
 //lb1[adccnt-1][1]=((uint16_t)lb1[adccnt-1][0]+(uint16_t)lb1[adccnt][0])>>1;
@@ -199,19 +216,30 @@ lb1[adccnt-1][0]=(uint16_t)lb1[adccnt][0];
 }
 */
 
-//tt++;
+
+tt=1;
 
 if(adccc>1){
 adcch3();
 //  ADC_Cmd(ADC1, ENABLE);
+ADC_ClearFlag(ADC1, ADC_FLAG_OVR);
 ADC_SoftwareStartConv(ADC1);
-//while(!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) && tt<24) tt++;
+//while((!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)) || tt) tt--;
+while(1){
+if(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==SET){
+break; 
+}
+if(tt>10){
+break;
+}
+tt++;
+}
+//  ADC_Cmd(ADC1, DISABLE);
 //for(int i=0;i<90;i++);
 if(adcbuf)
 wb3b[adccnt]=ADC1->DR;
 else
 wb3[adccnt]=ADC1->DR;
-//  ADC_Cmd(ADC1, DISABLE);
 
 if(adccc>2){
 ADC_SoftwareStartConv(ADC1);
@@ -221,7 +249,7 @@ wb4[adccnt]=ADC1->DR;
 //if(adccnt&1)
 //adcch3();
 //else
-adcch0();
+//adcch0();
 
 adccnt++;
 //DMA2_Stream0->CR|=((uint32_t)DMA_SxCR_EN);

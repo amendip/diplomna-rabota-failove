@@ -4,7 +4,8 @@ uint8_t g1e=1, g2e=0, g3e=0;
 uint16_t g1b[GBL]={0x1,0x2,0x3,0x2,0x1,0,0,5,0,0}, g2b[GBL], g3b[GBL];
 
 //uint8_t banner[41]="Tova e tekst abcdef 123456?";
-uint8_t banner[41]="U1=20V U2=30V U3=1.5V";
+//uint8_t banner[41]="U1=20V U2=30V U3=1.5V";
+uint8_t banner[41]="U1=20V U2=000 U3=000";
 
 
 uint8_t rv0_1=0;

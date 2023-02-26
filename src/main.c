@@ -82,12 +82,14 @@ int main(void)
 
 void vblank(){
 	uint16_t fontindb, fontindn;
+	char bch[41];
 	if(tu){
+	memcpy(bch, banner, 41);
 	for(uint8_t line=0;line<16;line++){
 		fontindb=(line&15)*95-0x20;
 		for(uint8_t i=0;i<41;i++){
-			if(!banner[i]) break;
-			fontindn=fontindb+banner[i];
+			if(!bch[i]) break;
+			fontindn=fontindb+bch[i];
 			for(uint8_t x=0;x<8;x++){
 			if((font[fontindn]>>x)&1)
 			textbuf[line][(i<<3)+x]=0xf0;
@@ -98,6 +100,7 @@ void vblank(){
 	}
 	tu=0;
 	}
+
 
 	if(adcbufbuf) adcbad=1;
 	else adcbbd=1;

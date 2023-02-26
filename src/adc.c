@@ -104,11 +104,11 @@ void adcinit(){
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);  
 
-/*  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL ;
   GPIO_Init(GPIOA, &GPIO_InitStructure);
-*/
+
 
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
@@ -176,11 +176,11 @@ adcend=0;
 ADC_SoftwareStartConv(ADC1);
 //while(!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) && tt<64) tt++;
 //while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==0);
-while(1){
-if(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==SET){ break; banner[1]++; }
-if(tt>70) break;
-tt++;
-}
+//while(1){
+//if(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==SET){ break; banner[1]++; }
+//if(tt>70) break;
+//tt++;
+//}
 if(adcbuf)
 wb2b[adccnt]=ADC1->DR;
 else
@@ -199,25 +199,29 @@ lb1[adccnt-1][0]=(uint16_t)lb1[adccnt][0];
 }
 */
 
-tt++;
+//tt++;
 
 if(adccc>1){
 adcch3();
-  ADC_Cmd(ADC1, ENABLE);
+//  ADC_Cmd(ADC1, ENABLE);
 ADC_SoftwareStartConv(ADC1);
-while(!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) && tt<24) tt++;
+//while(!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) && tt<24) tt++;
+//for(int i=0;i<90;i++);
 if(adcbuf)
 wb3b[adccnt]=ADC1->DR;
 else
 wb3[adccnt]=ADC1->DR;
-  ADC_Cmd(ADC1, DISABLE);
+//  ADC_Cmd(ADC1, DISABLE);
 
 if(adccc>2){
 ADC_SoftwareStartConv(ADC1);
 wb4[adccnt]=ADC1->DR;
 }
 }
-//adcch0();
+//if(adccnt&1)
+//adcch3();
+//else
+adcch0();
 
 adccnt++;
 //DMA2_Stream0->CR|=((uint32_t)DMA_SxCR_EN);

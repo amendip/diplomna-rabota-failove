@@ -22,10 +22,23 @@
     (LAYOUT_Netlist_File "OSCIL.MNL")
     (LAYOUT_PCB_Footprint "{PCB Footprint}")
     (FALSE)
-    (LAYOUT_Units "0"))
+    (LAYOUT_Units "0")
+    (BOM_Scope "0")
+    (BOM_Mode "0")
+    (BOM_Report_File "C:\ORCAD_PROJECTS\OSCIL\OSCIL.BOM")
+    (BOM_Merge_Include "FALSE")
+    (BOM_Property_Combine_7.0 "{Item}\t{Quantity}\t{Reference}\t{Value}")
+    (BOM_Header "Item\tQuantity\tReference\tPart")
+    (BOM_Include_File "C:\ORCAD_PROJECTS\OSCIL\OSCIL.INC")
+    (BOM_Include_File_Combine_7.0 "{Item}\t{Quantity}\t{Reference}\t{Value}")
+    (BOM_One_Part_Per_Line "FALSE")
+    (Open_BOM_in_Excel "FALSE")
+    (BOM_View_Output "FALSE"))
   (Folder "Outputs"
     (File ".\oscil.mnl"
-      (Type "LAYOUT Netlist File")))
+      (Type "LAYOUT Netlist File"))
+    (File ".\oscil.bom"
+      (Type "Report")))
   (Folder "Referenced Projects")
   (PartMRUSelector
     (OFFPAGELEFT-L
@@ -130,7 +143,7 @@
       (Path "Design Resources")
       (Path "Design Resources" "Library")
       (Path "Outputs")
-      (Select "Design Resources"))
+      (Select "Outputs" "C:\ORCAD_PROJECTS\oscil\oscil.bom"))
     (HierarchyView)
     (Doc
       (Type "COrCapturePMDoc")
@@ -141,7 +154,7 @@
       (Type "COrSchematicDoc")
       (Frame
         (Placement "44 0 1 -1 -1 -4 -23 234 1228 43 659")
-        (Scroll "0 96")
+        (Scroll "27 136")
         (Zoom "84")
         (Occurrence "/"))
       (Path "C:\ORCAD_PROJECTS\OSCIL\OSCIL.DSN")
@@ -151,8 +164,8 @@
       (Type "COrSchematicDoc")
       (Frame
         (Placement "44 0 1 -1 -1 -4 -23 261 1251 286 900")
-        (Scroll "850 478")
-        (Zoom "154")
+        (Scroll "597 2550")
+        (Zoom "528")
         (Occurrence "/"))
       (Path "C:\ORCAD_PROJECTS\OSCIL\OSCIL.DSN")
       (Schematic "SCHEMATIC1")
@@ -161,8 +174,8 @@
       (Type "COrSchematicDoc")
       (Frame
         (Placement "44 0 1 -1 -1 -4 -23 196 1186 122 737")
-        (Scroll "109 0")
-        (Zoom "156")
+        (Scroll "624 3182")
+        (Zoom "624")
         (Occurrence "/"))
       (Path "C:\ORCAD_PROJECTS\OSCIL\OSCIL.DSN")
       (Schematic "SCHEMATIC1")
@@ -171,8 +184,8 @@
       (Type "COrSchematicDoc")
       (Frame
         (Placement "44 0 1 -1 -1 -4 -23 22 1012 22 628")
-        (Scroll "256 559")
-        (Zoom "134")
+        (Scroll "574 2610")
+        (Zoom "536")
         (Occurrence "/"))
       (Path "C:\ORCAD_PROJECTS\OSCIL\OSCIL.DSN")
       (Schematic "SCHEMATIC1")

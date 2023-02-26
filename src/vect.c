@@ -62,8 +62,8 @@ void linedraw(){
 		//if(line>=(300-(lb1[i][0])) && line<=(300-(lb1[i][1])))
 		//vadr[i]^=0xE3;
 		vadr[i]^=0x1C;
-		//if(line==(300-((b3[trigp+i])>>4)))
-		//vadr[i]^=0xE0;
+		if(line==(300-((b3[trigp+i])>>4)))
+		vadr[i]^=0xE0;
 		//if(line==(300+((wb3[i])>>4)))
 		//vadr[i]^=0xE3;
 		//if(line==(300-((wb1[i])>>4)))

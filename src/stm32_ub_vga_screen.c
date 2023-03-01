@@ -412,9 +412,6 @@ void TIM2_IRQHandler(void)
     invblank=1;
     }
   }
-
-  if(!(VGA.hsync_cnt%nhsps))
-  hsyncsample();
 }
 
 
@@ -442,6 +439,9 @@ void DMA2_Stream5_IRQHandler(void)
     // auf "schwarz" schalten
     GPIOB->BSRR = (uint32_t)VGA_GPIO_HINIBBLE<<16;
 
+
+  if(!(VGA.hsync_cnt%nhsps))
+  hsyncsample();
   }
   else if(DMA_GetITStatus(DMA2_Stream0, DMA_IT_TCIF0)){
 DMA2_Stream0->CR&=~((uint32_t)DMA_SxCR_EN);

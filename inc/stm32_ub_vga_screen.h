@@ -25,7 +25,7 @@
 // das angezeigte Bild besteht aber nur aus 320x240 Pixel
 // jedes Pixel wird als 2x2 Punkt am Monitor angezeigt
 //--------------------------------------------------------------
-#define VGA_DISPLAY_X   280  // Anzahl der Pixel in X-Richtung
+#define VGA_DISPLAY_X   240  // Anzahl der Pixel in X-Richtung
 #define VGA_DISPLAY_Y   60  // Anzahl der Pixel in Y-Richtung
 
 

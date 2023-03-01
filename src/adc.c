@@ -156,6 +156,13 @@ ADC_EOCOnEachRegularChannelCmd(ADC1, ENABLE);
 
 void adcpoll(){
 uint8_t tt=1;
+if(ADC_GetFlagStatus(ADC1, ADC_FLAG_OVR)){
+banner[19]++;
+if(banner[19]>'9') banner[19]='0', banner[18]++;
+if(banner[18]>'9') banner[18]='0', banner[17]++;
+}
+ADC_ClearFlag(ADC1, ADC_FLAG_OVR);
+ADC_SoftwareStartConv(ADC1);
 while(1){
 if(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==SET){
 banner[12]++;
@@ -163,7 +170,7 @@ if(banner[12]>'9') banner[12]='0', banner[11]++;
 if(banner[11]>'9') banner[11]='0', banner[10]++;
 break; 
 }
-if(tt>10){
+if(tt>20){
 //banner[19]++;
 //if(banner[19]>'9') banner[19]='0', banner[18]++;
 //if(banner[18]>'9') banner[18]='0', banner[17]++;
@@ -208,13 +215,6 @@ return;
 //  ADC_Cmd(ADC1, DISABLE);
 //  ADC_Cmd(ADC1, ENABLE);
 adcch0();
-if(ADC_GetFlagStatus(ADC1, ADC_FLAG_OVR)){
-banner[19]++;
-if(banner[19]>'9') banner[19]='0', banner[18]++;
-if(banner[18]>'9') banner[18]='0', banner[17]++;
-}
-ADC_ClearFlag(ADC1, ADC_FLAG_OVR);
-ADC_SoftwareStartConv(ADC1);
 adcpoll();
 //while(!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) && tt<64) tt++;
 //while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==0);
@@ -246,8 +246,6 @@ lb1[adccnt-1][0]=(uint16_t)lb1[adccnt][0];
 if(adccc>1){
 adcch3();
 //  ADC_Cmd(ADC1, ENABLE);
-ADC_ClearFlag(ADC1, ADC_FLAG_OVR);
-ADC_SoftwareStartConv(ADC1);
 //while((!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)) || tt) tt--;
 adcpoll();
 //  ADC_Cmd(ADC1, DISABLE);
@@ -259,8 +257,6 @@ wb3[adccnt]=ADC1->DR;
 
 if(adccc>2){
 adcch6();
-ADC_ClearFlag(ADC1, ADC_FLAG_OVR);
-ADC_SoftwareStartConv(ADC1);
 adcpoll();
 if(adcbuf)
 wb4b[adccnt]=ADC1->DR;

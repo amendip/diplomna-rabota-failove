@@ -130,7 +130,7 @@ void vblank(){
 	if(adcend && !adcpause){
 	if(adcbufbuf) adcbad=1;
 	else adcbbd=1;
-	//trigp=0;
+	trigp=ADCBL;
 	uint16_t min=65535, max=0;
 	uint16_t *b2, *b3, *b4;
 	if(adcbuf) b2=wb2, b3=wb3, b4=wb4; else b2=wb2b, b3=wb3b, b4=wb4b;
@@ -139,20 +139,26 @@ void vblank(){
 		if(b2[i]>max) max=b2[i];
 	}
 	uint16_t triglvl;
+	
 	triglvl=((uint32_t)min+(uint32_t)max)/(uint32_t)4;
+	//triglvl=0x1FF;
 	for(uint16_t i=0; i<ADCBL; i++){
 		if(b2[i]<=triglvl && b2[i+1]>triglvl){
 			trigp=i;
 			break;
 		}
 	}
-	trigp=0;
-	for(uint16_t i=trigp; i<trigp+ADCBL; i++){
-	banner[0]='F';
+	if(trigp==0) banner[0]++;
+	
+	for(uint16_t i=0; i<2*ADCBL; i++){
+	//banner[0]='F';
 		b2[i]=300-(b2[i]>>4);
 		b3[i]=300-(b3[i]>>4);
 		b4[i]=300-(b4[i]>>4);
 	}
+	//for(uint16_t i=70; i<2*ADCBL; i+=1){
+	//	b2[i]=340;
+	//}
 	//trigp=0;
 	adcbufbuf=adcbuf;
 	adcend=0;

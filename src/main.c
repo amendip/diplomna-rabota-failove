@@ -26,7 +26,8 @@ int main(void)
   GPIO_Init(GPIOB, &GPIO_InitStructure);
 
   //wb2iala();
-  adcinit();
+  adcpininit();
+  adcpolling();
 
   //hsyncsample();
 
@@ -102,13 +103,13 @@ void vblank(){
 	}
 
 
+	if(adcend){
 	if(adcbufbuf) adcbad=1;
 	else adcbbd=1;
-	adcbufbuf=adcbuf;
 	//trigp=0;
 	uint16_t min=65535, max=0;
-	uint16_t *b2;
-	if(adcbufbuf) b2=wb2; else b2=wb2b;
+	uint16_t *b2, *b3, *b4;
+	if(adcbuf) b2=wb2, b3=wb3, b4=wb4; else b2=wb2b, b3=wb3b, b4=wb4b;
 	for(uint16_t i=0; i<2*ADCBL; i++){
 		if(b2[i]<min) min=b2[i];
 		if(b2[i]>max) max=b2[i];
@@ -121,5 +122,14 @@ void vblank(){
 			break;
 		}
 	}
+	for(uint16_t i=trigp; i<trigp+ADCBL; i++){
+	banner[0]='F';
+		b2[i]=300-(b2[i]>>4);
+		b3[i]=300-(b3[i]>>4);
+		b4[i]=300-(b4[i]>>4);
+	}
 	//trigp=0;
+	adcbufbuf=adcbuf;
+	adcend=0;
+	}
 }

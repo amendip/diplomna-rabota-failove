@@ -93,16 +93,17 @@ void adcch6(){
   ADC_RegularChannelConfig(ADC1, ADC_Channel_6, 1, ADC_SampleTime_3Cycles);
 }
 
-void adcinit(){
-  ADC_InitTypeDef       ADC_InitStructure;
-  ADC_CommonInitTypeDef ADC_CommonInitStructure;
-  DMA_InitTypeDef       DMA_InitStructure;
+void adcpininit(){
   GPIO_InitTypeDef      GPIO_InitStructure;
-  NVIC_InitTypeDef NVIC_InitStructure;
     
   /* Enable peripheral clocks *************************************************/
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);  
+
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL ;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
 
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
@@ -114,6 +115,15 @@ void adcinit(){
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL ;
   GPIO_Init(GPIOA, &GPIO_InitStructure);
+}
+
+
+void adcpolling(){
+  ADC_InitTypeDef       ADC_InitStructure;
+  ADC_CommonInitTypeDef ADC_CommonInitStructure;
+  
+  ADC_DMACmd(ADC1, DISABLE);
+  ADC_Cmd(ADC1, DISABLE);
   
   /* ADC Common Init **********************************************************/
   ADC_CommonInitStructure.ADC_Mode = ADC_Mode_Independent;
@@ -140,45 +150,12 @@ ADC_EOCOnEachRegularChannelCmd(ADC1, ENABLE);
 
   /* Enable ADC3 */
   ADC_Cmd(ADC1, ENABLE);
+
 }
 
-uint16_t adccnt=0;
-uint16_t triglvl=160;
-uint8_t adcend=0;
-uint8_t adcbuf=0, adcbad=0, adcbbd=1;
-uint8_t adccc=2;
-void hsyncsample(){
-//DMA2_Stream0->CR|=DMA_SxCR_EN;
-uint16_t tmp=0;
+
+void adcpoll(){
 uint8_t tt=1;
-/*if(adcend){
-ADC_SoftwareStartConv(ADC1);
-tmp=ADC1->DR;
-if(tmp<((uint16_t)100)<<4 || tmp>((uint16_t)150)<<4) return;
-}
-*/
-if(adcend){
-if((!adcbuf) && adcbad)
-adcbad=0;
-else if(adcbuf && adcbbd)
-adcbbd=0;
-else return;
-}else if(adccnt>=2*ADCBL){
-adccnt=0;
-adcbuf=!adcbuf;
-adcend=1;
-return;
-}
-adcend=0;
-
-//  ADC_Cmd(ADC1, DISABLE);
-//  ADC_Cmd(ADC1, ENABLE);
-adcch0();
-ADC_ClearFlag(ADC1, ADC_FLAG_OVR);
-ADC_SoftwareStartConv(ADC1);
-//while(!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) && tt<64) tt++;
-//while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==0);
-//ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC);
 while(1){
 if(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==SET){
 banner[12]++;
@@ -194,6 +171,48 @@ break;
 }
 tt++;
 }
+}
+
+
+uint16_t adccnt=0;
+uint16_t triglvl=160;
+uint8_t adcend=0;
+uint8_t adcbuf=0, adcbad=0, adcbbd=1;
+uint8_t adccc=2;
+void hsyncsample(){
+//DMA2_Stream0->CR|=DMA_SxCR_EN;
+uint16_t tmp=0;
+/*if(adcend){
+ADC_SoftwareStartConv(ADC1);
+tmp=ADC1->DR;
+if(tmp<((uint16_t)100)<<4 || tmp>((uint16_t)150)<<4) return;
+}
+*/
+/* if(adcend){
+if((!adcbuf) && adcbad)
+adcbad=0;
+else if(adcbuf && adcbbd)
+adcbbd=0;
+else return;
+}else
+*/
+if(adcend) return;
+if(adccnt>=2*ADCBL){
+adccnt=0;
+adcbuf=!adcbuf;
+adcend=1;
+return;
+}
+
+//  ADC_Cmd(ADC1, DISABLE);
+//  ADC_Cmd(ADC1, ENABLE);
+adcch0();
+ADC_ClearFlag(ADC1, ADC_FLAG_OVR);
+ADC_SoftwareStartConv(ADC1);
+adcpoll();
+//while(!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) && tt<64) tt++;
+//while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==0);
+//ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC);
 //  ADC_Cmd(ADC1, DISABLE);
 if(adcbuf)
 //lb1[adccnt][0]=(wb2b[adccnt]=ADC1->DR)>>4;
@@ -217,7 +236,6 @@ lb1[adccnt-1][0]=(uint16_t)lb1[adccnt][0];
 */
 
 
-tt=1;
 
 if(adccc>1){
 adcch3();
@@ -225,15 +243,7 @@ adcch3();
 ADC_ClearFlag(ADC1, ADC_FLAG_OVR);
 ADC_SoftwareStartConv(ADC1);
 //while((!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)) || tt) tt--;
-while(1){
-if(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==SET){
-break; 
-}
-if(tt>10){
-break;
-}
-tt++;
-}
+adcpoll();
 //  ADC_Cmd(ADC1, DISABLE);
 //for(int i=0;i<90;i++);
 if(adcbuf)
@@ -242,9 +252,16 @@ else
 wb3[adccnt]=ADC1->DR;
 
 if(adccc>2){
+adcch6();
+ADC_ClearFlag(ADC1, ADC_FLAG_OVR);
 ADC_SoftwareStartConv(ADC1);
+adcpoll();
+if(adcbuf)
+wb4b[adccnt]=ADC1->DR;
+else
 wb4[adccnt]=ADC1->DR;
 }
+
 }
 //if(adccnt&1)
 //adcch3();

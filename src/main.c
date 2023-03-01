@@ -25,6 +25,15 @@ int main(void)
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15;
   GPIO_Init(GPIOB, &GPIO_InitStructure);
 
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
+  GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;
+  GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+  GPIO_Init(GPIOB, &GPIO_InitStructure);
+
   //wb2iala();
   adcpininit();
   adcpolling();
@@ -62,6 +71,21 @@ int main(void)
    //banner[3]++;
    bp=60000;
    if(nhsps>0) nhsps--; else nhsps=200;
+   }
+  }else if(!GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_9)){
+   if(!bp){
+   bp=60000;
+   if(adccc>1) adccc--; else adccc=3;
+   }
+  }else if(!GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_14)){
+   if(!bp){
+   bp=60000;
+   if(adccc<3) adccc++; else adccc=1;
+   }
+  }else if(!GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_13)){
+   if(!bp){
+   bp=60000;
+   adcpause=!adcpause;
    }
   }else{
    if(bp) bp--;
@@ -103,7 +127,7 @@ void vblank(){
 	}
 
 
-	if(adcend){
+	if(adcend && !adcpause){
 	if(adcbufbuf) adcbad=1;
 	else adcbbd=1;
 	//trigp=0;
@@ -122,6 +146,7 @@ void vblank(){
 			break;
 		}
 	}
+	trigp=0;
 	for(uint16_t i=trigp; i<trigp+ADCBL; i++){
 	banner[0]='F';
 		b2[i]=300-(b2[i]>>4);

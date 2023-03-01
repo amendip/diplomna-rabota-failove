@@ -135,7 +135,7 @@ void adcpolling(){
   /* ADC1 Init ****************************************************************/
   ADC_InitStructure.ADC_Resolution = ADC_Resolution_12b;
   ADC_InitStructure.ADC_ScanConvMode = ENABLE;
-  ADC_InitStructure.ADC_ContinuousConvMode = ENABLE;
+  ADC_InitStructure.ADC_ContinuousConvMode = DISABLE;
   ADC_InitStructure.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_None;
   ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_T1_CC1;
   ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
@@ -164,9 +164,9 @@ if(banner[11]>'9') banner[11]='0', banner[10]++;
 break; 
 }
 if(tt>10){
-banner[19]++;
-if(banner[19]>'9') banner[19]='0', banner[18]++;
-if(banner[18]>'9') banner[18]='0', banner[17]++;
+//banner[19]++;
+//if(banner[19]>'9') banner[19]='0', banner[18]++;
+//if(banner[18]>'9') banner[18]='0', banner[17]++;
 break;
 }
 tt++;
@@ -177,8 +177,9 @@ tt++;
 uint16_t adccnt=0;
 uint16_t triglvl=160;
 uint8_t adcend=0;
+uint8_t adcpause=0;
 uint8_t adcbuf=0, adcbad=0, adcbbd=1;
-uint8_t adccc=2;
+uint8_t adccc=1;
 void hsyncsample(){
 //DMA2_Stream0->CR|=DMA_SxCR_EN;
 uint16_t tmp=0;
@@ -196,7 +197,7 @@ adcbbd=0;
 else return;
 }else
 */
-if(adcend) return;
+if(adcend || adcpause) return;
 if(adccnt>=2*ADCBL){
 adccnt=0;
 adcbuf=!adcbuf;
@@ -207,6 +208,11 @@ return;
 //  ADC_Cmd(ADC1, DISABLE);
 //  ADC_Cmd(ADC1, ENABLE);
 adcch0();
+if(ADC_GetFlagStatus(ADC1, ADC_FLAG_OVR)){
+banner[19]++;
+if(banner[19]>'9') banner[19]='0', banner[18]++;
+if(banner[18]>'9') banner[18]='0', banner[17]++;
+}
 ADC_ClearFlag(ADC1, ADC_FLAG_OVR);
 ADC_SoftwareStartConv(ADC1);
 adcpoll();
@@ -235,7 +241,7 @@ lb1[adccnt-1][0]=(uint16_t)lb1[adccnt][0];
 }
 */
 
-
+//for(uint32_t i=300; i>0; i--);
 
 if(adccc>1){
 adcch3();

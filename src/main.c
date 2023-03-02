@@ -106,11 +106,11 @@ int main(void)
   }
 }
 
-void swp(uint16_t a, uint16_t b){
+void swp(uint16_t *a, uint16_t *b){
 	uint16_t tmp;
-	tmp=a;
-	a=b;
-	b=tmp;
+	tmp=*a;
+	*a=*b;
+	*b=tmp;
 }
 
 void vblank(){
@@ -178,21 +178,22 @@ void vblank(){
 	//trigp=0;
 	break;
 	case 1:
-	for(uint16_t i=trigp; i<ADCBL; i++){
+	for(uint16_t i=0; i<2*ADCBL; i++){
 	maxi=i;
-	for(uint16_t j=i+1; j<ADCBL; j++)
+	for(uint16_t j=i+1; j<2*ADCBL; j++)
 	if(b2[j]>b2[maxi])
 	maxi=j;
 
 
-	swp(b2[i],b2[maxi]);
-	swp(b3[i],b3[maxi]);
-	swp(b4[i],b4[maxi]);
+	swp(&b2[i],&b2[maxi]);
+	swp(&b3[i],&b3[maxi]);
+	swp(&b4[i],&b4[maxi]);
 
 	b2[i]=300-(b2[i]>>4);
 	b3[i]=150-(b3[i]>>5);
-	//b4[i]=((b4[i]>>4)|0x3);
-	b4[i]=0xFF;
+	//b3[i]=150;
+	b4[i]=((b4[i]>>4)|0x3);
+	//b4[i]=0xFF;
 	}
 	break;
 	}

@@ -113,6 +113,27 @@ void swp(uint16_t *a, uint16_t *b){
 	*b=tmp;
 }
 
+float bclv(float a){
+float b=4-a;
+if(a<b && a<1) return 1-a;
+if(b<a && b<1) if(b>0) return 1-b; else return 1;
+return 0;
+}
+
+float fm(float a, uint8_t b){
+return a-((uint8_t)(a/b))*b;
+}
+
+uint8_t hue2rgb(uint16_t hue){
+float h;
+float kr, kg, kb;
+	h=(hue>>4)*0.02380952381;
+	kr=fm((5+h),6);
+	kg=fm((3+h),6);
+	kb=fm((1+h),6);
+	return ((uint8_t)(bclv(kr)*0x7)<<5)|((uint8_t)(bclv(kg)*0x7)<<2)|(uint8_t)(bclv(kb)*0x3);
+}
+
 void vblank(){
 	uint16_t fontindb, fontindn;
 	char bch[41];
@@ -192,7 +213,8 @@ void vblank(){
 	b2[i]=300-(b2[i]>>4);
 	b3[i]=150-(b3[i]>>5);
 	//b3[i]=150;
-	b4[i]=((b4[i]>>4)|0x3);
+	//b4[i]=((b4[i]>>4)|0x3);
+	b4[i]=hue2rgb(b4[i]);
 	//b4[i]=0xFF;
 	}
 	break;

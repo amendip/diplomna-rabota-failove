@@ -96,7 +96,7 @@ void linedraw(){
 	}
 	break;
 	case 1:
-	for(;xyc<ADCBL;xyc+=20){
+	for(;xyc<ADCBL;xyc+=1){
 		if(b2[xyc]!=line) break;
 		vadr[b3[xyc]]=b4[xyc];
 	}

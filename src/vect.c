@@ -15,6 +15,9 @@ uint16_t trigp=0;
 uint8_t VGA_RAMvect0[321];
 uint8_t VGA_RAMvect1[321];
 
+uint8_t mode=1;
+uint16_t xyc=0;
+
 void linehandler(){
 	if(!rv0_1)
 	VGA.start_adr=&VGA_RAMvect0[0];
@@ -61,6 +64,9 @@ void linedraw(){
 	b2=&b2[trigp];
 	b3=&b3[trigp];
 	b4=&b4[trigp];
+	
+	switch(mode){
+	case 0:
 	for(uint16_t i=rstrsi;i<SCRW;i+=4){
 		//if(line==300-(wb1[(i<<2)&0xff]>>4))
 		//vadr[i]^=0xFF;
@@ -88,6 +94,16 @@ void linedraw(){
 		//vadr[i]^=0xFF;
 	//	vadr[ia[i]]^=0xfc;
 	}
+	break;
+	case 1:
+	for(;xyc<ADCBL;xyc++){
+		if(b2[xyc]!=line) break;
+		vadr[b3[xyc]]=b4[xyc];
+	}
+	if(xyc>=ADCBL) xyc=0;
+	break;
+	}
+
 	}
 	//for(uint16_t i=la2[line]; i<la2[line+1]; i++)
 	//	vadr[ia2[i]]^=0xE3;

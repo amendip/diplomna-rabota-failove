@@ -6,6 +6,7 @@
 
 void adcpininit(void);
 void adcpolling(void);
+void adcpoll(void);
 uint16_t adcsample(void);
 void hsyncsample(void);
 

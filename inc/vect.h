@@ -13,6 +13,7 @@ extern uint8_t rstrsi;
 extern uint8_t adcbufbuf;
 extern uint16_t trigp;
 extern uint8_t banner[41];
+extern uint8_t mode;
 
 #define GBL 10//graph buffer length
 

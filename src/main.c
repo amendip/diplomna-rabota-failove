@@ -65,6 +65,7 @@ int main(void)
    //banner[3]++;
    bp=60000;
    if(nhsps<200) nhsps++; else nhsps=1;
+   mode=!mode;
    }
   }else if(!GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_15)){
    if(!bp){
@@ -105,6 +106,13 @@ int main(void)
   }
 }
 
+void swp(uint16_t a, uint16_t b){
+	uint16_t tmp;
+	tmp=a;
+	a=b;
+	b=tmp;
+}
+
 void vblank(){
 	uint16_t fontindb, fontindn;
 	char bch[41];
@@ -126,11 +134,16 @@ void vblank(){
 	tu=0;
 	}
 
+	adcpolling();
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_2, 1, ADC_SampleTime_28Cycles);
+	adcpoll();
+	nhsps=(((ADC1->DR)>>5)+2);
+
 
 	if(adcend && !adcpause){
 	if(adcbufbuf) adcbad=1;
 	else adcbbd=1;
-	trigp=ADCBL;
+	//trigp=ADCBL;
 	uint16_t min=65535, max=0;
 	uint16_t *b2, *b3, *b4;
 	if(adcbuf) b2=wb2, b3=wb3, b4=wb4; else b2=wb2b, b3=wb3b, b4=wb4b;
@@ -139,6 +152,7 @@ void vblank(){
 		if(b2[i]>max) max=b2[i];
 	}
 	uint16_t triglvl;
+	uint16_t maxi;
 	
 	triglvl=((uint32_t)min+(uint32_t)max)/(uint32_t)4;
 	//triglvl=0x1FF;
@@ -150,6 +164,8 @@ void vblank(){
 	}
 	if(trigp==0) banner[0]++;
 	
+	switch(mode){
+	case 0:
 	for(uint16_t i=0; i<2*ADCBL; i++){
 	//banner[0]='F';
 		b2[i]=300-(b2[i]>>4);
@@ -160,6 +176,26 @@ void vblank(){
 	//	b2[i]=340;
 	//}
 	//trigp=0;
+	break;
+	case 1:
+	for(uint16_t i=trigp; i<ADCBL; i++){
+	maxi=i;
+	for(uint16_t j=i+1; j<ADCBL; j++)
+	if(b2[j]>b2[maxi])
+	maxi=j;
+
+
+	swp(b2[i],b2[maxi]);
+	swp(b3[i],b3[maxi]);
+	swp(b4[i],b4[maxi]);
+
+	b2[i]=300-(b2[i]>>4);
+	b3[i]=150-(b3[i]>>5);
+	//b4[i]=((b4[i]>>4)|0x3);
+	b4[i]=0xFF;
+	}
+	break;
+	}
 	adcbufbuf=adcbuf;
 	adcend=0;
 	}

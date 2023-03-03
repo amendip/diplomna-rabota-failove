@@ -36,6 +36,7 @@ CFLAGS  = -g -O2 -Wall
 #CFLAGS += -T$(STD_PERIPH_LIBS)/Project/STM32F10x_StdPeriph_Template/TrueSTUDIO/STM3210B-EVAL/stm32_flash.ld
 #CFLAGS += -T$(STD_PERIPH_LIBS)/Project/STM32F4xx_StdPeriph_Templates/TrueSTUDIO/STM32F401xx/STM32F401VC_FLASH.ld
 CFLAGS += -TSTM32F401CCUX_FLASH.ld
+CFLAGS += -L/usr/lib/gcc/arm-unknown-eabi/12/../../../../arm-unknown-eabi/lib/thumb/v7e-m+fp/hard/
 CFLAGS += -mlittle-endian -mthumb -mcpu=cortex-m4 -mthumb
 CFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
 #CFLAGS += -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER
@@ -49,6 +50,7 @@ CFLAGS += -I$(STD_PERIPH_LIBS_CMSIS)/Include/
 CFLAGS += -I$(STD_PERIPH_LIBS)/inc
 CFLAGS += -Iinc
 CFLAGS += -g
+CFLAGS += -fno-math-errno
 
 OBJS = $(SOURCES:.c=.o)
 
@@ -56,7 +58,7 @@ all: $(PROJECT).elf
 
 # compile
 $(PROJECT).elf: $(SOURCES)
-	$(CC) $(CFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $^ -o $@ -lm -lc
 	#$(OBJCOPY) -O ihex $(PROJECT).elf $(PROJECT).hex
 	#$(OBJCOPY) -O binary $(PROJECT).elf $(PROJECT).bin
 

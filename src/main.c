@@ -57,7 +57,7 @@ int main(void)
     curval++;
     banner[4]='0'+curval%10;
     tu=1;
-    haha=1000000;
+    haha=100000;
   }
 
   if(!GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_8)){
@@ -65,7 +65,7 @@ int main(void)
    //banner[3]++;
    bp=60000;
    if(nhsps<200) nhsps++; else nhsps=1;
-   mode=!mode;
+   mode=(mode+2)%4;
    }
   }else if(!GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_15)){
    if(!bp){
@@ -134,6 +134,176 @@ float kr, kg, kb;
 	return ((uint8_t)(bclv(kr)*0x7)<<5)|((uint8_t)(bclv(kg)*0x7)<<2)|(uint8_t)(bclv(kb)*0x3);
 }
 
+void auh(uint16_t *a, uint8_t b){
+*a&=0xFF;
+*a|=b<<8;
+}
+
+void fft(uint16_t *a, uint16_t l, uint16_t s){
+int16_t r, im;
+uint8_t a1, a2;
+
+if(s<l){
+fft(a, l, s*2);
+fft(a+s, l, s*2);
+
+for(uint16_t i=0;i<l;i+=2*s){
+
+if(i>=2*ADCBL){
+continue;
+}else{
+r=cos(-M_PI*i/l)*a[i+s];
+im=sin(-M_PI*i/l)*a[i+s];
+a1=sqrt(((a[i]&0xFF)+r)*((a[i]&0xFF)+r)+im*im);
+a2=sqrt(((a[i]&0xFF)-r)*((a[i]&0xFF)-r)+im*im);
+}
+
+auh(&a[i/2], a1);
+auh(&a[(i+l)/2], a2);
+}
+}
+
+}
+
+/*
+void four1(uint16_t *data, unsigned long l)
+{
+unsigned long n, mmax, m, j, istep, i;
+double wtemp, wr, wpr, wpi, wi, theta;
+double tempr, tempi;
+// reverse-binary reindexing
+n = l<<1;
+j=1;
+for (i=1; i<n; i+=2) {
+if (j>i) {
+if(i>=ADCBL || j>=ADCBL) continue;
+swp(&data[j-1], &data[i-1]);
+swp(&data[j], &data[i]);
+}
+m = l;
+while (m>=2 && j>m) {
+j -= m;
+m >>= 1;
+}
+j += m;
+};
+
+// here begins the Danielson-Lanczos section
+mmax=2;
+while (n>mmax) {
+istep = mmax<<1;
+theta = -(2*M_PI/mmax);
+wtemp = sin(0.5*theta);
+wpr = -2.0*wtemp*wtemp;
+wpi = sin(theta);
+wr = 1.0;
+wi = 0.0;
+for (m=1; m < mmax; m += 2) {
+for (i=m; i <= n; i += istep) {
+j=i+mmax;
+if(i>=ADCBL || j>=ADCBL) continue;
+tempr = wr*data[j-1] - wi*data[j];
+tempi = wr * data[j] + wi*data[j-1];
+
+data[j-1] = data[i-1] - tempr;
+data[j] = data[i] - tempi;
+data[i-1] += tempr;
+data[i] += tempi;
+}
+wtemp=wr;
+wr += wr*wpr - wi*wpi;
+wi += wi*wpr + wtemp*wpi;
+}
+mmax=istep;
+}
+}
+*/
+
+void four1(int16_t *data, const int n) {
+int nn,mmax,m,j,istep,i;
+double wtemp,wr,wpr,wpi,wi,theta,tempr,tempi;
+
+nn = n << 1;
+j = 1;
+for (i=1;i<nn;i+=2) {
+if (j > i) {
+if(i>=2*ADCBL || j>=2*ADCBL) continue;
+swp(&data[j-1],&data[i-1]);
+swp(&data[j],&data[i]);
+}
+m=n;
+while (m >= 2 && j > m) {
+j -= m;
+
+m >>= 1;
+}
+j += m;
+}
+
+mmax=2;
+while (nn > mmax) {
+istep=mmax << 1;
+theta=(6.28318530717959/mmax);
+wtemp=sin(0.5*theta);
+wpr = -2.0*wtemp*wtemp;
+wpi=sin(theta);
+wr=1.0;
+wi=0.0;
+for (m=1;m<mmax;m+=2) {
+for (i=m;i<=nn;i+=istep) {
+j=i+mmax;
+if(i>=2*ADCBL || j>=2*ADCBL) continue;
+tempr=wr*data[j-1]-wi*data[j];
+tempi=wr*data[j]+wi*data[j-1];
+data[j-1]=data[i-1]-tempr;
+data[j]=data[i]-tempi;
+data[i-1] += tempr;
+data[i] += tempi;
+}
+wr=(wtemp=wr)*wpr-wi*wpi+wr;
+wi=wi*wpr+wtemp*wpi+wi;
+}
+mmax=istep;
+}
+}
+
+void realft(int16_t *data, unsigned long n) {
+int i,i1,i2,i3,i4;
+double c1=0.5,c2,h1r,h1i,h2r,h2i,wr,wi,wpr,wpi,wtemp;
+double theta=3.141592653589793238/(n>>1);
+
+c2 = -0.5;
+four1(data,n>>1);
+
+wtemp=sin(0.5*theta);
+wpr = -2.0*wtemp*wtemp;
+wpi=sin(theta);
+wr=1.0+wpr;
+wi=wpi;
+
+for (i=1;i<(n>>2);i++) {
+i2=1+(i1=i+i);
+i4=1+(i3=n-i1);
+if(i1>=2*ADCBL || i2>=2*ADCBL || i3>=2*ADCBL || i4>=2*ADCBL) continue;
+h1r=c1*(data[i1]+data[i3]);
+h1i=c1*(data[i2]-data[i4]);
+h2r= -c2*(data[i2]+data[i4]);
+h2i=c2*(data[i1]-data[i3]);
+data[i1]=h1r+wr*h2r-wi*h2i;
+data[i2]=h1i+wr*h2i+wi*h2r;
+data[i3]=h1r-wr*h2r+wi*h2i;
+data[i4]= -h1i+wr*h2i+wi*h2r;
+wr=(wtemp=wr)*wpr-wi*wpi+wr;
+wi=wi*wpr+wtemp*wpi+wi;
+}
+
+data[0] = (h1r=data[0])+data[1];
+data[1] = h1r-data[1];
+
+}
+
+#define pw2c(x) (int16_t)x*(int16_t)x
+
 void vblank(){
 	uint16_t fontindb, fontindn;
 	char bch[41];
@@ -175,6 +345,8 @@ void vblank(){
 	uint16_t triglvl;
 	uint16_t maxi;
 	
+	switch(mode){
+	case 0:
 	triglvl=((uint32_t)min+(uint32_t)max)/(uint32_t)4;
 	//triglvl=0x1FF;
 	for(uint16_t i=0; i<ADCBL; i++){
@@ -184,9 +356,7 @@ void vblank(){
 		}
 	}
 	if(trigp==0) banner[0]++;
-	
-	switch(mode){
-	case 0:
+
 	for(uint16_t i=0; i<2*ADCBL; i++){
 	//banner[0]='F';
 		b2[i]=300-(b2[i]>>4);
@@ -218,6 +388,44 @@ void vblank(){
 	//b4[i]=0xFF;
 	}
 	break;
+	
+	case 2:
+	trigp=0;
+	for(uint16_t i=0; i<2*ADCBL; i++){
+	if(b2[i]&1){ b2[i]=0; continue;}
+	b2[i]>>=6;
+	}
+	//fft(b2, 1024, 1);
+	//four1(b2, 256);
+	realft(b2, 512);
+	for(uint16_t i=0; i<ADCBL; i+=2){
+	//if(i>512){
+	//b2[i>>1]=301;
+	//continue;
+	//}
+	b2[i]=sqrt(pw2c(b2[i])+pw2c(b2[i+1]));
+	//b2[i>>1]>>=8;
+	b2[i]=300-((b2[i])>>6);
+	b2[i+1]=600;
+
+	/*
+	if(((int16_t)b2[i])>0)
+	b2[i]=300-((b2[i])>>6);
+	//b2[i>>1]=300-((b2[i>>1])<<2);
+	else
+	b2[i]=300-(((int16_t)b2[i])/64);
+	if(((int16_t)b2[i+1])>0)
+	b2[i+1]=300-((b2[i+1])>>6);
+	else
+	b2[i+1]=300-(((int16_t)b2[i+1])/64);
+	*/
+
+	//b2[i]=350;
+	//b2[i]=b2[i+1]=0;
+	//b2[i+1]=340;
+	}
+	break;
+
 	}
 	adcbufbuf=adcbuf;
 	adcend=0;

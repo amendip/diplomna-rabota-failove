@@ -15,7 +15,7 @@ uint16_t trigp=0;
 uint8_t VGA_RAMvect0[321];
 uint8_t VGA_RAMvect1[321];
 
-uint8_t mode=1;
+uint8_t mode=0;
 uint16_t xyc=0;
 
 void linehandler(){
@@ -102,6 +102,14 @@ void linedraw(){
 	}
 	if(xyc>=ADCBL) xyc=0;
 	
+	break;
+	case 2:
+	for(uint16_t i=rstrsi;i<SCRW;i+=4){
+		if(line>b2[i] && line<=300)
+		//if(line==b2[i])
+		//vadr[i]^=0xFC>>(i&1);
+		vadr[i]^=0xFC;
+	}
 	break;
 	}
 

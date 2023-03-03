@@ -100,7 +100,18 @@ void adcpininit(){
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);  
 
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
+
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL ;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL ;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL ;
   GPIO_Init(GPIOA, &GPIO_InitStructure);
@@ -110,13 +121,22 @@ void adcpininit(){
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL ;
   GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL ;
   GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL ;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL ;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL ;
   GPIO_Init(GPIOA, &GPIO_InitStructure);
@@ -190,6 +210,7 @@ uint16_t adccnt=0;
 uint16_t triglvl=160;
 uint8_t adcend=0;
 uint8_t adcpause=0;
+uint8_t adcmode=0;
 uint8_t adcbuf=0, adcbad=0, adcbbd=1;
 uint8_t adccc=1;
 uint32_t hsynccnt=0; 

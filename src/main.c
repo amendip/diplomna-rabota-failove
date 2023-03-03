@@ -13,6 +13,7 @@ int main(void)
 
   UB_VGA_Screen_Init();
 
+  //buttons
   GPIO_InitTypeDef  GPIO_InitStructure;
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
@@ -33,6 +34,32 @@ int main(void)
 
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
   GPIO_Init(GPIOB, &GPIO_InitStructure);
+  
+  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+  //range switches
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
+  //GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
+  //GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  //GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+  //GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+  //ac switches
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
 
   //wb2iala();
   adcpininit();
@@ -64,20 +91,21 @@ int main(void)
    if(!bp){
    //banner[3]++;
    bp=60000;
-   if(nhsps<200) nhsps++; else nhsps=1;
+   //if(nhsps<200) nhsps++; else nhsps=1;
    mode=(mode+1)%3;
    }
   }else if(!GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_15)){
    if(!bp){
    //banner[3]++;
    bp=60000;
-   if(nhsps>0) nhsps--; else nhsps=200;
+   //if(nhsps>0) nhsps--; else nhsps=200;
    mode=(mode+2)%3;
    }
   }else if(!GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_9)){
    if(!bp){
    bp=60000;
-   if(adccc>1) adccc--; else adccc=3;
+   //if(adccc>1) adccc--; else adccc=3;
+   adcmode=!adcmode;
    }
   }else if(!GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_14)){
    if(!bp){
@@ -135,6 +163,7 @@ float kr, kg, kb;
 	return ((uint8_t)(bclv(kr)*0x7)<<5)|((uint8_t)(bclv(kg)*0x7)<<2)|(uint8_t)(bclv(kb)*0x3);
 }
 
+/*
 void auh(uint16_t *a, uint8_t b){
 *a&=0xFF;
 *a|=b<<8;
@@ -164,59 +193,6 @@ auh(&a[(i+l)/2], a2);
 }
 }
 
-}
-
-/*
-void four1(uint16_t *data, unsigned long l)
-{
-unsigned long n, mmax, m, j, istep, i;
-double wtemp, wr, wpr, wpi, wi, theta;
-double tempr, tempi;
-// reverse-binary reindexing
-n = l<<1;
-j=1;
-for (i=1; i<n; i+=2) {
-if (j>i) {
-if(i>=ADCBL || j>=ADCBL) continue;
-swp(&data[j-1], &data[i-1]);
-swp(&data[j], &data[i]);
-}
-m = l;
-while (m>=2 && j>m) {
-j -= m;
-m >>= 1;
-}
-j += m;
-};
-
-// here begins the Danielson-Lanczos section
-mmax=2;
-while (n>mmax) {
-istep = mmax<<1;
-theta = -(2*M_PI/mmax);
-wtemp = sin(0.5*theta);
-wpr = -2.0*wtemp*wtemp;
-wpi = sin(theta);
-wr = 1.0;
-wi = 0.0;
-for (m=1; m < mmax; m += 2) {
-for (i=m; i <= n; i += istep) {
-j=i+mmax;
-if(i>=ADCBL || j>=ADCBL) continue;
-tempr = wr*data[j-1] - wi*data[j];
-tempi = wr * data[j] + wi*data[j-1];
-
-data[j-1] = data[i-1] - tempr;
-data[j] = data[i] - tempi;
-data[i-1] += tempr;
-data[i] += tempi;
-}
-wtemp=wr;
-wr += wr*wpr - wi*wpi;
-wi += wi*wpr + wtemp*wpi;
-}
-mmax=istep;
-}
 }
 */
 
@@ -307,9 +283,52 @@ data[1] = h1r-data[1];
 
 void vblank(){
 	uint16_t fontindb, fontindn;
+	uint8_t c1r, c2r, c3r;
 	char bch[41];
+	uint8_t clrs[41]={0xf0,0xf0,0xf0,0xf0,0xf0,0xfc,0xfc,0xfc,0xe3,0xe3,0xe3,0x1c,0x1c,0x1c,0xf0,0xf0,0xf0,0xf0,0xf0,0xf0};
 	if(tu){
 	memcpy(bch, banner, 41);
+	bch[5]=GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8)*'~'+(!GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8))*'-';
+	bch[8]=GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_9)*'~'+(!GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_9))*'-';
+	bch[11]=GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_10)*'~'+(!GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_10))*'-';
+
+	c1r=GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_11)*6;
+	c2r=GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_12)*6;
+	c3r=GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_15)*6;
+
+	adcpolling();
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_1, 1, ADC_SampleTime_28Cycles);
+	adcpoll();
+	c1r+=5-((ADC1->DR)/683)+1;
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_4, 1, ADC_SampleTime_28Cycles);
+	adcpoll();
+	c2r+=5-((ADC1->DR)/683)+1;
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_7, 1, ADC_SampleTime_28Cycles);
+	adcpoll();
+	c3r+=5-((ADC1->DR)/683)+1;
+	
+	if(c1r>=10){
+	bch[7]='0'+c1r%10;
+	bch[6]='0'+c1r/10;
+	}else{
+	bch[7]=' ';
+	bch[6]='0'+c1r;
+	}
+	if(c2r>=10){
+	bch[10]='0'+c2r%10;
+	bch[9]='0'+c2r/10;
+	}else{
+	bch[10]=' ';
+	bch[9]='0'+c2r;
+	}
+	if(c3r>=10){
+	bch[13]='0'+c3r%10;
+	bch[12]='0'+c3r/10;
+	}else{
+	bch[13]=' ';
+	bch[12]='0'+c3r;
+	}
+
 	for(uint8_t line=0;line<16;line++){
 		fontindb=(line&15)*95-0x20;
 		for(uint8_t i=0;i<41;i++){
@@ -317,7 +336,7 @@ void vblank(){
 			fontindn=fontindb+bch[i];
 			for(uint8_t x=0;x<8;x++){
 			if((font[fontindn]>>x)&1)
-			textbuf[line][(i<<3)+x]=0xf0;
+			textbuf[line][(i<<3)+x]=clrs[i];
 			else
 			textbuf[line][(i<<3)+x]=0x00;
 			}
@@ -372,17 +391,25 @@ void vblank(){
 	case 1:
 	for(uint16_t i=0; i<2*ADCBL; i++){
 	maxi=i;
-	for(uint16_t j=i+1; j<2*ADCBL; j++)
+	for(uint16_t j=i+1; j<2*ADCBL; j++){
 	if(b2[j]>b2[maxi])
 	maxi=j;
-
+	else if(b2[j]==b2[maxi]){
+	if(b3[j]>b3[maxi])
+	maxi=j;
+	else if(b3[j]==b3[maxi]);
+	b2[maxi]=0, maxi=j;
+	}
+	}
 
 	swp(&b2[i],&b2[maxi]);
 	swp(&b3[i],&b3[maxi]);
 	swp(&b4[i],&b4[maxi]);
 
+	if(b2[i]==0) continue;
+
 	b2[i]=300-(b2[i]>>4);
-	b3[i]=150-(b3[i]>>5);
+	b3[i]=30+(b3[i]>>5);
 	//b3[i]=150;
 	//b4[i]=((b4[i]>>4)|0x3);
 	b4[i]=hue2rgb(b4[i]);

@@ -49,12 +49,12 @@ void linedraw(){
 	if(line==0){
 	for(uint16_t i=0; i<SCRW; i++)
 		vadr[i]=0xff;
-	}else if(line<17){
+	}else if(line<16){
 		for(uint16_t i=0; i<50; i++)
 		((uint32_t *)vadr)[i]=((uint32_t *)textbuf[line])[i];
 		//vadr[32]=0xff;
 		vadr[230]=0xff;
-	}else if(line==17){
+	}else if(line==16){
 	for(uint16_t i=0; i<SCRW; i++)
 		vadr[i]=0xff;
 	}else{

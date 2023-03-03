@@ -15,5 +15,6 @@ extern uint8_t adcend;
 extern uint8_t adccc;
 extern uint8_t adcpause;
 extern uint8_t adcbuf, adcbad, adcbbd;
+extern uint32_t hsynccnt; 
 
 #endif

@@ -65,13 +65,14 @@ int main(void)
    //banner[3]++;
    bp=60000;
    if(nhsps<200) nhsps++; else nhsps=1;
-   mode=(mode+2)%4;
+   mode=(mode+1)%3;
    }
   }else if(!GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_15)){
    if(!bp){
    //banner[3]++;
    bp=60000;
    if(nhsps>0) nhsps--; else nhsps=200;
+   mode=(mode+2)%3;
    }
   }else if(!GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_9)){
    if(!bp){
@@ -328,7 +329,7 @@ void vblank(){
 	adcpolling();
 	ADC_RegularChannelConfig(ADC1, ADC_Channel_2, 1, ADC_SampleTime_28Cycles);
 	adcpoll();
-	nhsps=(((ADC1->DR)>>5)+2);
+	nhsps=(((ADC1->DR)>>5)+1);
 
 
 	if(adcend && !adcpause){

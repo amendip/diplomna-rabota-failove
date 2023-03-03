@@ -356,7 +356,6 @@ void TIM5_IRQHandler(void)
 // VORSICHT !! aus Performance Gründen wird das Interrupt-Flag
 //             nicht abgefragt (es gibt nur eine INT-Quelle
 //--------------------------------------------------------------
-uint32_t hsynccnt=0; 
 uint8_t nhsps=1;
 uint8_t invblank=0;
 void TIM2_IRQHandler(void)
@@ -365,6 +364,7 @@ void TIM2_IRQHandler(void)
   // Interrupt von Timer2 CH3 ist aufgetreten (für Trigger start)
   TIM_ClearITPendingBit(TIM2, TIM_IT_CC4);
 
+  hsynccnt++;
   VGA.hsync_cnt++;
   if(VGA.hsync_cnt>=VGA_VSYNC_PERIODE) {
     // Alle Zeilen wurden angezeigt
@@ -405,13 +405,13 @@ void TIM2_IRQHandler(void)
 
     // Test ob Adresspointer hochgesetzt werden muss
     //if((VGA.hsync_cnt & 0x7)==0x7) {
-    if((VGA.hsync_cnt & 0x3)==0x3) {
+    //if((hsynccnt & 0x3)==0x3) {
       // nur bei jeder Zweiten Zeile hochsetzen
     //  VGA.start_adr+=(VGA_DISPLAY_X+1);
     }else{
     invblank=1;
     }
-  }
+  //}
 }
 
 
@@ -440,7 +440,7 @@ void DMA2_Stream5_IRQHandler(void)
     GPIOB->BSRR = (uint32_t)VGA_GPIO_HINIBBLE<<16;
 
 
-  if(!(VGA.hsync_cnt%nhsps))
+  if(!(hsynccnt%nhsps))
   hsyncsample();
   }
   else if(DMA_GetITStatus(DMA2_Stream0, DMA_IT_TCIF0)){

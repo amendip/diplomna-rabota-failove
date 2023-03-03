@@ -175,7 +175,7 @@ if(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==SET){
 //if(banner[11]>'9') banner[11]='0', banner[10]++;
 break; 
 }
-if(tt>20){
+if(tt>100){
 banner[19]++;
 if(banner[19]>'9') banner[19]='0', banner[18]++;
 if(banner[18]>'9') banner[18]='0', banner[17]++;
@@ -192,6 +192,7 @@ uint8_t adcend=0;
 uint8_t adcpause=0;
 uint8_t adcbuf=0, adcbad=0, adcbbd=1;
 uint8_t adccc=1;
+uint32_t hsynccnt=0; 
 void hsyncsample(){
 //DMA2_Stream0->CR|=DMA_SxCR_EN;
 uint16_t tmp=0;

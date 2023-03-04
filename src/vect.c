@@ -5,7 +5,7 @@ uint16_t g1b[GBL]={0x1,0x2,0x3,0x2,0x1,0,0,5,0,0}, g2b[GBL], g3b[GBL];
 
 //uint8_t banner[41]="Tova e tekst abcdef 123456?";
 //uint8_t banner[41]="U1=20V U2=30V U3=1.5V";
-uint8_t banner[41]="U1=20V U2=000 U3=000";
+uint8_t banner[41]="U1=20V U2=000  ";
 
 
 uint8_t rv0_1=0;
@@ -24,7 +24,7 @@ void linehandler(){
 	else
 	VGA.start_adr=&VGA_RAMvect1[0];
 }
-#define SCRW 240
+#define SCRW 256
 #define GRID 0x01010101
 void linedraw(){
 	uint8_t *vadr;
@@ -40,7 +40,8 @@ void linedraw(){
 
 	vadr[SCRW]=0;
 	if(line%48) linecol=0x00000000; else linecol=GRID;
-	if(line!=17) for(uint16_t i=0; i<SCRW/4; i++)
+	if(line==16) linecol=0xffffffff;
+	for(uint16_t i=0; i<SCRW/4; i++)
 		((uint32_t *)vadr)[i]=linecol;
 	//for(uint16_t i=la[line]; i<la[line+1]; i++){
 	//	if(200-10*g1b[i%GBL]==VGA.hsync_cnt-VGA_VSYNC_BILD_START)
@@ -53,10 +54,10 @@ void linedraw(){
 		for(uint16_t i=0; i<50; i++)
 		((uint32_t *)vadr)[i]=((uint32_t *)textbuf[line])[i];
 		//vadr[32]=0xff;
-		vadr[230]=0xff;
+		//vadr[230]=0xff;
 	}else if(line==16){
-	for(uint16_t i=0; i<SCRW; i++)
-		vadr[i]=0xff;
+	//for(uint16_t i=0; i<SCRW; i++)
+	//	vadr[i]=0xff;
 	}else{
 	for(uint16_t i=35;i<280;i+=36) vadr[i]=GRID;
 	scm=0xE3*(adccc>1);

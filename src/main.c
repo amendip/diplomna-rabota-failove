@@ -283,9 +283,10 @@ data[1] = h1r-data[1];
 
 void vblank(){
 	uint16_t fontindb, fontindn;
+	uint16_t bl;
 	uint8_t c1r, c2r, c3r;
 	char bch[41];
-	uint8_t clrs[41]={0xf0,0xf0,0xf0,0xf0,0xf0,0xfc,0xfc,0xfc,0xe3,0xe3,0xe3,0x1c,0x1c,0x1c,0xf0,0xf0,0xf0,0xf0,0xf0,0xf0};
+	uint8_t clrs[41]={0xff,0xff,0xff,0x67,0xee,0xfc,0xfc,0xfc,0xe3,0xe3,0xe3,0x1c,0x1c,0x1c,0xf0,0xf0,0xf0,0xf0,0xf0,0xf0};
 	if(tu){
 	memcpy(bch, banner, 41);
 	bch[5]=GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8)*'~'+(!GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8))*'-';
@@ -306,6 +307,13 @@ void vblank(){
 	ADC_RegularChannelConfig(ADC1, ADC_Channel_7, 1, ADC_SampleTime_28Cycles);
 	adcpoll();
 	c3r+=5-((ADC1->DR)/683)+1;
+
+
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_5, 1, ADC_SampleTime_28Cycles);
+	adcpoll();
+	bl=((ADC1->DR)-2815)/62+1;
+	//bl=((3625)-2815)/62+1;
+	if(bl>13) bl=13;
 	
 	if(c1r>=10){
 	bch[7]='0'+c1r%10;
@@ -329,6 +337,18 @@ void vblank(){
 	bch[12]='0'+c3r;
 	}
 
+	bch[3]='0'+adccc;
+
+	if(adcmode) bch[4]='H';
+	else bch[4]='V', clrs[4]=0x1f;
+
+
+	switch(mode){
+	case 0: bch[0]='W'; bch[1]='A'; bch[2]='V'; break;
+	case 1: bch[0]='X'; bch[1]='Y'; bch[2]='Z'; break;
+	case 2: bch[0]='F'; bch[1]='F'; bch[2]='T'; break;
+	}
+
 	for(uint8_t line=0;line<16;line++){
 		fontindb=(line&15)*95-0x20;
 		for(uint8_t i=0;i<41;i++){
@@ -342,13 +362,35 @@ void vblank(){
 			}
 		}
 	}
+
+	for(uint8_t line=0;line<15;line++){
+		for(uint8_t p=120;p<125;p++){
+			if(line>=15-bl)
+			textbuf[line][p]=hue2rgb(((15-line)<<4)*7);
+		}
+	}
 	tu=0;
 	}
 
 	adcpolling();
 	ADC_RegularChannelConfig(ADC1, ADC_Channel_2, 1, ADC_SampleTime_28Cycles);
 	adcpoll();
+
+
+	if(adcmode){
 	nhsps=(((ADC1->DR)>>5)+1);
+	}else{
+	nhsps=(ADC1->DR)>>9;
+	adcinitdma();
+	ADC_SoftwareStartConv(ADC1);
+	while(!DMA_GetFlagStatus(DMA2_Stream0, DMA_IT_TCIF0));
+	DMA_ClearFlag(DMA2_Stream0, DMA_IT_TCIF0);
+	adcbuf=!adcbuf;
+	adcend=1;
+	DMA_Cmd(DMA2_Stream0, DISABLE);
+	//DMA_DeInit(DMA2_Stream0);
+	}
+
 
 
 	if(adcend && !adcpause){
@@ -358,6 +400,10 @@ void vblank(){
 	uint16_t min=65535, max=0;
 	uint16_t *b2, *b3, *b4;
 	if(adcbuf) b2=wb2, b3=wb3, b4=wb4; else b2=wb2b, b3=wb3b, b4=wb4b;
+
+//banner[19]='0'+b2[0]%10;
+//banner[18]='0'+(b2[0]/10)%10;
+//banner[17]='0'+b2[0]/100;
 	for(uint16_t i=0; i<2*ADCBL; i++){
 		if(b2[i]<min) min=b2[i];
 		if(b2[i]>max) max=b2[i];
@@ -375,7 +421,7 @@ void vblank(){
 			break;
 		}
 	}
-	if(trigp==0) banner[0]++;
+	//if(trigp==0) banner[0]++;
 
 	for(uint16_t i=0; i<2*ADCBL; i++){
 	//banner[0]='F';

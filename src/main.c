@@ -4,10 +4,19 @@
 
 void vblank(void);
 
+#define BC 10000
+
 uint8_t tu=1;
 int main(void)
 {
   uint32_t n;
+
+  wb2=wbc[0];
+  wb3=wbc[1];
+  wb4=wbc[2];
+  wb2b=wbcb[0];
+  wb3b=wbcb[1];
+  wb4b=wbcb[2];
 
   SystemInit();
 
@@ -90,31 +99,31 @@ int main(void)
   if(!GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_8)){
    if(!bp){
    //banner[3]++;
-   bp=60000;
+   bp=BC;
    //if(nhsps<200) nhsps++; else nhsps=1;
    mode=(mode+1)%3;
    }
   }else if(!GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_15)){
    if(!bp){
    //banner[3]++;
-   bp=60000;
+   bp=BC;
    //if(nhsps>0) nhsps--; else nhsps=200;
    mode=(mode+2)%3;
    }
   }else if(!GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_9)){
    if(!bp){
-   bp=60000;
+   bp=BC;
    //if(adccc>1) adccc--; else adccc=3;
    adcmode=!adcmode;
    }
   }else if(!GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_14)){
    if(!bp){
-   bp=60000;
+   bp=BC;
    if(adccc<3) adccc++; else adccc=1;
    }
   }else if(!GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_13)){
    if(!bp){
-   bp=60000;
+   bp=BC;
    adcpause=!adcpause;
    }
   }else{
@@ -376,11 +385,13 @@ void vblank(){
 	ADC_RegularChannelConfig(ADC1, ADC_Channel_2, 1, ADC_SampleTime_28Cycles);
 	adcpoll();
 
+	uint16_t *b2, *b3, *b4;
 
 	if(adcmode){
 	nhsps=(((ADC1->DR)>>5)+1);
 	}else{
 	nhsps=(ADC1->DR)>>9;
+	if(!adcpause){
 	adcinitdma();
 	ADC_SoftwareStartConv(ADC1);
 	while(!DMA_GetFlagStatus(DMA2_Stream0, DMA_IT_TCIF0));
@@ -389,6 +400,31 @@ void vblank(){
 	adcend=1;
 	DMA_Cmd(DMA2_Stream0, DISABLE);
 	//DMA_DeInit(DMA2_Stream0);
+
+//adccc=3;
+	if(adcbuf) b2=wb2, b3=wb3, b4=wb4; else b2=wb2b, b3=wb3b, b4=wb4b;
+	if(adccc>1){
+	
+	if(adccc>2){
+	for(uint16_t i=3;i<6*ADCBL;i+=3){
+		for(uint16_t j=0;j<i*2/3;j++){
+			swp(&b2[i-j], &b2[i-j-1]);
+		}
+	}
+	for(uint16_t i=ADCBL+2;i<6*ADCBL;i+=2){
+		for(uint16_t j=0;j<(i-ADCBL)/2;j++){
+			swp(&b2[i-j], &b2[i-j-1]);
+		}
+	}
+	}else for(uint16_t i=2;i<4*ADCBL;i+=2){
+		for(uint16_t j=0;j<i/2;j++){
+			swp(&b2[i-j], &b2[i-j-1]);
+		}
+	}
+
+	}
+
+	}
 	}
 
 
@@ -398,7 +434,6 @@ void vblank(){
 	else adcbbd=1;
 	//trigp=ADCBL;
 	uint16_t min=65535, max=0;
-	uint16_t *b2, *b3, *b4;
 	if(adcbuf) b2=wb2, b3=wb3, b4=wb4; else b2=wb2b, b3=wb3b, b4=wb4b;
 
 //banner[19]='0'+b2[0]%10;
@@ -444,7 +479,7 @@ void vblank(){
 	if(b3[j]>b3[maxi])
 	maxi=j;
 	else if(b3[j]==b3[maxi]);
-	b2[maxi]=0, maxi=j;
+	b2[i]=0, maxi=j;
 	}
 	}
 
@@ -452,8 +487,7 @@ void vblank(){
 	swp(&b3[i],&b3[maxi]);
 	swp(&b4[i],&b4[maxi]);
 
-	if(b2[i]==0) continue;
-
+	if(!b2[i]) continue;
 	b2[i]=300-(b2[i]>>4);
 	b3[i]=30+(b3[i]>>5);
 	//b3[i]=150;

@@ -14,12 +14,14 @@ uint16_t wb1[320]={
 };
 
 uint8_t lb1[2*ADCBL][2]={0};
-uint16_t wb2[2*ADCBL]={0};
-uint16_t wb3[2*ADCBL]={0};
-uint16_t wb4[2*ADCBL]={0};
-uint16_t wb2b[2*ADCBL]={0};
-uint16_t wb3b[2*ADCBL]={0};
-uint16_t wb4b[2*ADCBL]={0};
+uint16_t wbc[3][2*ADCBL]={0};
+uint16_t *wb2;
+uint16_t *wb3;
+uint16_t *wb4;
+uint16_t wbcb[3][2*ADCBL]={0};
+uint16_t *wb2b;
+uint16_t *wb3b;
+uint16_t *wb4b;
 
 uint8_t textbuf[16][200]={0};
 

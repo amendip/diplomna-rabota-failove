@@ -23,7 +23,7 @@ void adcinitdma(){
   else
   DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)wb2;
   DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralToMemory;
-  DMA_InitStructure.DMA_BufferSize = 2*ADCBL;
+  DMA_InitStructure.DMA_BufferSize = adccc*2*ADCBL;
   DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
   DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
   DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
@@ -47,12 +47,12 @@ void adcinitdma(){
 
   /* ADC1 Init ****************************************************************/
   ADC_InitStructure.ADC_Resolution = ADC_Resolution_12b;
-  ADC_InitStructure.ADC_ScanConvMode = DISABLE;
+  ADC_InitStructure.ADC_ScanConvMode = ENABLE;
   ADC_InitStructure.ADC_ContinuousConvMode = ENABLE;
   ADC_InitStructure.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_None;
   ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_T1_CC1; //???
   ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
-  ADC_InitStructure.ADC_NbrOfConversion = 1;
+  ADC_InitStructure.ADC_NbrOfConversion = adccc;
   ADC_Init(ADC1, &ADC_InitStructure);
   //ADC1->CR2 |= (1<<10);
 
@@ -63,6 +63,11 @@ ADC_EOCOnEachRegularChannelCmd(ADC1, DISABLE);
   /* ADC3 regular channel7 configuration **************************************/
   //ADC_RegularChannelConfig(ADC1, ADC_Channel_0, 1, ADC_SampleTime_15Cycles);
   ADC_RegularChannelConfig(ADC1, ADC_Channel_0, 1, nhsps);
+  if(adccc>1){
+  ADC_RegularChannelConfig(ADC1, ADC_Channel_3, 2, nhsps);
+  if(adccc>2)
+  ADC_RegularChannelConfig(ADC1, ADC_Channel_6, 3, nhsps);
+  }
 
  /* Enable DMA request after last transfer (Single-ADC mode) */
  //ADC_DMARequestAfterLastTransferCmd(ADC1, ENABLE);
@@ -205,7 +210,7 @@ uint16_t adccnt=0;
 uint16_t triglvl=160;
 uint8_t adcend=0;
 uint8_t adcpause=0;
-uint8_t adcmode=0;
+uint8_t adcmode=1;
 uint8_t adcbuf=0, adcbad=0, adcbbd=1;
 uint8_t adccc=1;
 uint32_t hsynccnt=0; 

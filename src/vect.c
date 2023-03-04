@@ -97,12 +97,25 @@ void linedraw(){
 	}
 	break;
 	case 1:
-	for(;xyc<ADCBL;xyc+=1){
-		if(b2[xyc]!=line) break;
-		vadr[b3[xyc]]=b4[xyc];
+	
+	/*
+	for(uint16_t i=rstrsi;i<SCRW;i+=4){
+		if(line==b2[i])
+		vadr[i]^=0xFC;
+		if(line==b3[i])//{
+		vadr[i]^=scm;
+		if(line==b4[i])
+		vadr[i]^=tcm;
+	}
+	*/
+	
+	
+	for(;xyc<ADCBL && b2[xyc]==line;xyc+=1){
+		vadr[b3[xyc]+1]=b4[xyc];
 	}
 	if(xyc>=ADCBL) xyc=0;
 	
+
 	break;
 	case 2:
 	for(uint16_t i=rstrsi;i<SCRW;i+=4){

@@ -500,7 +500,7 @@ void vblank(){
 	case 2:
 	trigp=0;
 	for(uint16_t i=0; i<2*ADCBL; i++){
-	if(b2[i]&1){ b2[i]=0; continue;}
+	//if(b2[i]&1){ b2[i]=0; continue;}
 	b2[i]>>=6;
 	}
 	//fft(b2, 1024, 1);
